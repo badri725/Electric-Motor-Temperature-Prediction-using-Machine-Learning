@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prediction History</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            text-align: center; /* Center all content by default */
+        }
+
+        h2 {
+            color: #2f3640;
+            margin-bottom: 20px;
+        }
+
+        /* Home button styling */
+        .home-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-bottom: 30px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .home-btn:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        /* Table styling */
+        table {
+            border-collapse: collapse;
+            width: 90%;
+            margin: 0 auto; /* Center table */
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #e0f7fa;
+        }
+
+        /* No records message */
+        .no-records {
+            color: #888;
+            font-size: 18px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Prediction History</h2>
+    <a href="/" class="home-btn">🏠 Home</a>
+
+    {% if records %}
+        <table>
+            <tr>
+                <th>Ambient</th><th>Coolant</th><th>U_d</th><th>U_q</th>
+                <th>Motor Speed</th><th>I_d</th><th>I_q</th>
+                <th>Predicted Temperature</th><th>State</th>
+            </tr>
+            {% for row in records %}
+            <tr>
+                <td>{{ row.ambient }}</td>
+                <td>{{ row.coolant }}</td>
+                <td>{{ row.u_d }}</td>
+                <td>{{ row.u_q }}</td>
+                <td>{{ row.motor_speed }}</td>
+                <td>{{ row.i_d }}</td>
+                <td>{{ row.i_q }}</td>
+                <td>{{ row.predicted_temperature }}</td>
+                <td>{{ row.temp_state }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p class="no-records">No predictions yet.</p>
+    {% endif %}
+</body>
+</html>

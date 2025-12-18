@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MotorTempAI - Temperature Prediction</title>
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        color: #fff;
+    }
+
+    .container-main {
+        display: flex;
+        min-height: 100vh;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        flex-wrap: wrap;
+        gap: 40px;
+    }
+
+    /* Left image side */
+    .image-side {
+        flex: 1;
+        min-width: 300px;
+        text-align: center;
+        animation: fadeInLeft 1s ease forwards;
+    }
+    .image-side img {
+        max-width: 100%;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        transition: transform 0.5s;
+    }
+    .image-side img:hover {
+        transform: scale(1.05);
+    }
+
+    /* Right input side */
+    .form-side {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 30px;
+        border-radius: 25px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        animation: fadeInRight 1s ease forwards;
+    }
+    .form-side h2 {
+        font-weight: bold;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    .form-side .subtitle {
+        font-size: 0.95rem;
+        font-style: italic;
+        text-align: center;
+        margin-bottom: 30px;
+        color: #ccc;
+    }
+
+    /* Input styling */
+    .input-group-text {
+        background: #1c2a34;
+        border: none;
+        color: #fff;
+    }
+    .form-control {
+        border-radius: 10px;
+        border: none;
+    }
+
+    /* Buttons */
+    .btn-predict {
+        width: 100%;
+        background: linear-gradient(90deg, #ff9800, #f44336);
+        border: none;
+        font-weight: bold;
+        font-size: 1rem;
+        border-radius: 12px;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .btn-predict:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(255, 152, 0, 0.5);
+    }
+
+    .btn-secondary {
+        border-radius: 12px;
+        padding: 8px 20px;
+        font-weight: bold;
+    }
+
+    /* Result box */
+    .result-box {
+        margin-top: 25px;
+        padding: 25px;
+        border-radius: 25px;
+        text-align: center;
+        animation: fadeInUp 1s ease forwards;
+        font-weight: bold;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    }
+
+    .result-safe {
+        background: linear-gradient(135deg, #a5d6a7, #388e3c);
+        color: #fff;
+    }
+
+    .result-warm {
+        background: linear-gradient(135deg, #ffd180, #ff9800);
+        color: #000;
+    }
+
+    .result-hot {
+        background: linear-gradient(135deg, #ff8a80, #d32f2f);
+        color: #fff;
+    }
+
+    /* Keyframes */
+    @keyframes fadeInLeft { from {opacity:0; transform:translateX(-50px);} to {opacity:1; transform:translateX(0);} }
+    @keyframes fadeInRight { from {opacity:0; transform:translateX(50px);} to {opacity:1; transform:translateX(0);} }
+    @keyframes fadeInUp { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+
+</style>
+</head>
+<body>
+
+<div class="container-main">
+
+    <!-- Image Side -->
+    <div class="image-side">
+        <img src="{{ url_for('static', filename='images/motor1.gif') }}" alt="Motor Image">
+    </div>
+
+    <!-- Form Side -->
+    <div class="form-side animate__animated animate__fadeInRight">
+        <h2><i class="bi bi-speedometer2"></i> Motor Temperature</h2>
+
+        <!-- Link to full prediction history -->
+        <div class="text-center mb-3">
+            <a href="{{ url_for('history') }}" class="btn btn-secondary">
+                📊 View Full Prediction History
+            </a>
+        </div>
+
+        <p class="subtitle">Enter motor parameters to predict Permanent Magnet Surface Temperature (rotor temperature). Example values are shown.</p>
+
+        <form action="/manual_predict" method="POST">
+            <div class="mb-3 input-group">
+                <span class="input-group-text"><i class="bi bi-thermometer-half"></i></span>
+                <input type="number" step="any" name="ambient" class="form-control" placeholder="Ambient Temperature (°C) e.g., 25" required>
+            </div>
+            <div class="mb-3 input-group">
+                <span class="input-group-text"><i class="bi bi-droplet-half"></i></span>
+                <input type="number" step="any" name="coolant" class="form-control" placeholder="Coolant Temperature (°C) e.g., 30" required>
+            </div>
+            <div class="mb-3 input-group">
+                <span class="input-group-text"><i class="bi bi-lightning"></i></span>
+                <input type="number" step="any" name="u_d" class="form-control" placeholder="Voltage d-component (V) e.g., 200" required>
+            </div>
+            <div class="mb-3 input-group">
+                <span class="input-group-text"><i class="bi bi-lightning-charge"></i></span>
+                <input type="number" step="any" name="u_q" class="form-control" placeholder="Voltage q-component (V) e.g., 180" required>
+            </div>
+            <div class="mb-3 input-group">
+                <span class="input-group-text"><i class="bi bi-speedometer"></i></span>
+                <input type="number" step="any" name="motor_speed" class="form-control" placeholder="Motor Speed (RPM) e.g., 1500" required>
+            </div>
+            <div class="mb-3 input-group">
+                <span class="input-group-text"><i class="bi bi-battery-half"></i></span>
+                <input type="number" step="any" name="i_d" class="form-control" placeholder="Current d-component (A) e.g., 10" required>
+            </div>
+            <div class="mb-3 input-group">
+                <span class="input-group-text"><i class="bi bi-battery-charging"></i></span>
+                <input type="number" step="any" name="i_q" class="form-control" placeholder="Current q-component (A) e.g., 15" required>
+            </div>
+
+            <button type="submit" class="btn btn-predict mt-2">🔍 Predict</button>
+        </form>
+
+        {% if prediction %}
+        <div class="result-box 
+            {% if prediction|float > 80 %} result-hot
+            {% elif prediction|float > 60 %} result-warm
+            {% else %} result-safe
+            {% endif %} mt-3">
+            <h3>Predicted PM Temperature</h3>
+            <p style="font-size: 2rem; font-weight: bold;">{{ prediction }} °C</p>
+            <h5>
+                State: 
+                {% if prediction|float > 80 %}🔥 Overheated
+                {% elif prediction|float > 60 %}🌡️ Warm
+                {% else %}✅ Safe
+                {% endif %}
+            </h5>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                {% if prediction|float > 80 %}
+                    ⚠️ Reduce load and check cooling system.
+                {% elif prediction|float > 60 %}
+                    ⚠️ Monitor motor; ensure adequate cooling.
+                {% else %}
+                    ✅ Motor temperature is safe.
+                {% endif %}
+            </p>
+            <a href="/" class="btn btn-secondary mt-3">🏠 Back to Home</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

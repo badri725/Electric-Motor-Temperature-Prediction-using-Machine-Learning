@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor-Based Prediction | Electric Motor Temperature</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #00b4db, #0083b0);
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            margin: auto;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .back-btn {
+            background-color: #2196F3;
+            margin-top: 15px;
+        }
+        .back-btn:hover {
+            background-color: #1976D2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Sensor-Based Motor Temperature Prediction</h2>
+        <p>Click the button below to simulate real-time sensor readings and predict motor temperature.</p>
+
+        <form action="/sensor_predict" method="post">
+            <button type="submit">Get Prediction</button>
+        </form>
+
+        {% if prediction_text %}
+        <div class="result">
+            <h3>{{ prediction_text }}</h3>
+        </div>
+        {% endif %}
+
+        <a href="/" style="text-decoration:none;">
+            <button type="button" class="back-btn">← Back to Home</button>
+        </a>
+    </div>
+</body>
+</html>
